@@ -79,7 +79,7 @@ aws-cli/2.7.14 Python/3.9.11 Linux/5.15.0-40-generic exe/x86_64.ubuntu.22 prompt
 `aws configure`
 
 ## Install eksctl
-This is a command line tool for managing EKS clusters
+This is a command line tool for managing EKS clusters. Documentation here: [https://eksctl.io/](https://eksctl.io/)
 
 ```bash
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
@@ -110,12 +110,32 @@ to be able to modify the stack, start it, and stop it.
 This took several minutes but you can watch it build in CloudFormation in the Events tab.
 The longest part was the actual creation of the EKS cluster itself. You can see it being created in the EKS console.
 
-This looks almost identical to same layout as we have seen in the past: 2 Public Subnets and 2 Private Subnets. 
-However, there are some differences in the deployed EKS Cluster:
-* It does not include any Add-ons
-* It includes a Nodegroup by default. These nodes are set to be `m5.large` instances.
-* 
+This looks almost identical to same layout as we have seen in the past: 2 Public Subnets and 2 Private Subnets.
 The template used is here: [cloud-formation-template.json](cloud-formation-template.json)
+
+The command creates the cluster in the following way:
+* It does not include any Add-ons
+* It includes a Nodegroup with 2 nodes by default. These nodes are set to be `m5.large` instances.
+
+### Config file / Command line arguments
+You can specify a configuration file for how the cluster should be created. For example: [eks-example-cluster.yaml](eks-example-cluster.yaml)
+
+Below does not work:
+You can also specify the node groups from the command line:
+
+```
+CLUSTER_NAME="Test-Cluster"
+REGION="us-east-1"
+NODE_COUNT=2 # Desired Count
+NODE_VOLUME_SIZE=20 # Size in GB
+NODE_VOLUME_TYPE="t3.medium" # Note these need to be big enough to run docker containers
+eksctl create cluster \
+   --name "$CLUSTER_NAME" \
+   --region "$REGION" \
+   --nodes="$NODE_COUNT" \
+   --node-volume-size="$NODE_VOLUME_SIZE" \
+   --node-volume-type="$NODE_VOLUME_TYPE"
+```
 
 This command also updates the ~/.kube folder and adds the cluster to the config mapping.
 
