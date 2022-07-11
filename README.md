@@ -36,6 +36,7 @@ sudo apt-get -y install unzip
       * I also needed `EC2FullAccess` -
       * I also needed `AWSCloudFormationFullAccess` - 
       * I also needed `IAMFullAccess` - This one seems extreme. But during the process it needed to create roles for the cluster. It is probably possible to trim this one down. 
+      * I also needed ssm:GetParameter so I created an ssm:* permission: [ssmadministrator.json](ssmadministrator.json)
       
 
 ## Install Amazon version of kubectl
@@ -119,6 +120,14 @@ The command creates the cluster in the following way:
 
 ### Config file / Command line arguments
 You can specify a configuration file for how the cluster should be created. For example: [eks-example-cluster.yaml](eks-example-cluster.yaml)
+
+#### Using Config File
+I was able to deploy using [eks-node-groups.yaml](eks-node-groups.yaml)
+
+This config file is setup to use the default ssh key so I had to create one using: `ssh-keygen`
+
+Then, I was able to run `eksctl create cluster -f eks-node-groups.yaml`
+
 
 Below does not work:
 You can also specify the node groups from the command line:
